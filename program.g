@@ -1,2 +1,2 @@
-print "Hello, World"
-8724
+PRINT "\n"
+PRINT 123.56+23
