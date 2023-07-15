@@ -1,3 +1,2 @@
-PRINT "Hello, World"
-PRINT "HOPE"
-PRINT "I'm a barbie grrl"
+print "Hello, World"
+8724

@@ -1,3 +1,8 @@
+# TOKEN CONSTANTS
+
+TT_PRINT = ["PRINT", "print"]
+DIGITS = "0123456789"
+
 from sys import argv
 
 def open_file(filename):
@@ -6,6 +11,7 @@ def open_file(filename):
 
 def lex(filecontent):
     tok = ""
+    expr_started = 0 # 0 --> Not in a number | 1 --> In a number
     state = 0 # 0 -- > Not in a string | 1 --> In a string
     string = ""
     tokens = []
@@ -14,8 +20,11 @@ def lex(filecontent):
         tok += char
         if tok in " \n" and state == 0: 
             tok = ""
-        elif tok == "PRINT":
+        elif tok in TT_PRINT:
             tokens.append("PRINT")
+            tok = ""
+        elif tok in DIGITS:  
+            expr_started = 1
             tok = ""
         elif tok == "\"":
             if state == 0:
@@ -35,7 +44,8 @@ def parse(toks):
     i = 0
     while (i < len(toks)):
         if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING":
-            print(toks[i+1][8:len(toks[i+1])-1])
+            #print(toks[i+1][8:len(toks[i+1])-1])
+            print(toks[i+1][7:])
             i+=2
 
 def run():
