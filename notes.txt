@@ -1,0 +1,7 @@
+DATA TYPES:
+    NUM : basically float, but every number is this so yeah
+    STR : string
+    ARR : array, dumbass
+    DIC : Dictionary ?
+
+    No Boolean, you can use a NUM for that

@@ -1,4 +1,7 @@
 import clear
+import shell
+
+__version__ = "0.0"
 
 # TOKEN CONSTANTS
 
@@ -107,8 +110,10 @@ def parse(toks):
 
 def run():
 
-    
-    data = open_file(argv[1])
+    try:
+        data = open_file(argv[1])
+    except IndexError:
+        shell.sh()
 
     toks = lex(data)
     parse(toks)
