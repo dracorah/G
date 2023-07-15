@@ -6,28 +6,41 @@ def open_file(filename):
 
 def lex(filecontent):
     tok = ""
-    state = 0
+    state = 0 # 0 -- > Not in a string | 1 --> In a string
     string = ""
+    tokens = []
     filecontent = list(filecontent)
     for char in filecontent:
         tok += char
-        if tok == " ": tok = ""
+        if tok in " \n" and state == 0: 
+            tok = ""
         elif tok == "PRINT":
-            print("FOUND A PRINT")
+            tokens.append("PRINT")
             tok = ""
         elif tok == "\"":
             if state == 0:
                 state = 1
             elif state == 1:
-                print("FOUNT STRING")
+                tokens.append("STRING:" + string + "\"")
                 string = ""
                 state = 0
+                tok = ""
         elif state == 1:
-            string += char
+            string += tok
             tok = ""
+    return tokens
+    #print(tokens)
+
+def parse(toks):
+    i = 0
+    while (i < len(toks)):
+        if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING":
+            print(toks[i+1][8:len(toks[i+1])-1])
+            i+=2
 
 def run():
     data = open_file(argv[1])
-    lex(data)
+    toks = lex(data)
+    parse(toks)
 
 run()
