@@ -47,7 +47,7 @@ class Lexer:
 
     def advance(self):
         self.pos += 1
-        self.current_char = self.text[self.pos] if self.Pos < len(self.text) else None
+        self.current_char = self.text[self.pos] if self.pos < len(self.text) else None
 
     def make_tokens(self):
         tokens = []
