@@ -2,4 +2,4 @@
 
 The G Programming Language is an interpreted language similar to BASIC
 
-PLS CONTRIBUTE
+![The G Programming Language Logo](G.png "The G Programming Language Logo")
