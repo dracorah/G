@@ -1,8 +1,12 @@
+import clear
+
 # TOKEN CONSTANTS
 
 TT_PRINT = ["PRINT", "print"]
-DIGITS = "0123456789."
-MATH_CHARS = "+-/*"
+TT_QUIT = ["QUIT", "quit", "EXIT", "exit"]
+TT_CLEAR = ["CLEAR", "clear"]
+DIGITS = list("0123456789.")
+MATH_CHARS = list("+-/*()")
 
 from sys import argv
 
@@ -24,18 +28,26 @@ def lex(filecontent):
         tok += char
         if tok in " " and state == 0: 
             tok = ""
-        if tok in "\n" and state == 0 or tok in "<EOF>" and state == 0: 
+        if tok == "\n" and state == 0 or tok == "<EOF>" and state == 0: 
             if expr != "" and isexpr == 1:
                 tokens.append("EXPR:" + expr)
                 #print(expr + "EXPR")
+                isexpr = 0
                 expr = ""
             elif expr != "" and isexpr == 0:
                 tokens.append("NUM:" + expr)
                 #print(expr + "NUM")
+                isexpr = 0
                 expr = ""
             tok = ""
         elif tok in TT_PRINT:
             tokens.append("PRINT")
+            tok = ""
+        elif tok in TT_QUIT:
+            tokens.append("QUIT")
+            tok = ""
+        elif tok in TT_CLEAR:
+            tokens.append("CLEAR")
             tok = ""
         elif tok in DIGITS :  
             expr_started = 1
@@ -62,21 +74,42 @@ def lex(filecontent):
 def parse(toks):
     i = 0
     while (i < len(toks)):
-        if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING":
-            print(toks[i+1][8:len(toks[i+1])-1])
-            #print(toks[i+1][7:])
-            i+=2
-
-        elif toks[i] + " " + toks[i+1][0:3] == "PRINT NUM":
-            print(toks[i+1][4:])
-            i+=2
         
-        elif toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR":
-            print(toks[i+1][5:])
-            i+=2
+        if toks[i] == "QUIT":
+            break
+            quit()
+        
+        elif toks[i] == "CLEAR":
+            clear.clear()
+        
+        elif toks[i].startswith("NUM") or toks[i].startswith("EXPR"):
+            i += 1
+
+        else:
+        
+            try:
+                
+                
+                if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING":
+                    print(toks[i+1][8:len(toks[i+1])-1])
+                    #print(toks[i+1][7:])
+                    i+=2
+
+                elif toks[i] + " " + toks[i+1][0:3] == "PRINT NUM":
+                    print(toks[i+1][4:])
+                    i+=2
+                
+                elif toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR":
+                    print(toks[i+1][5:])
+                    i+=2
+            except IndexError:
+                pass
 
 def run():
+
+    
     data = open_file(argv[1])
+
     toks = lex(data)
     parse(toks)
 
