@@ -6,10 +6,11 @@ __version__ = "0.0"
 # TOKEN CONSTANTS
 
 TT_PRINT = ["PRINT", "print"]
+TT_PRINTSTR = ["STR_PRINT", "str_print"]
 TT_QUIT = ["QUIT", "quit", "EXIT", "exit"]
 TT_CLEAR = ["CLEAR", "clear"]
 DIGITS = list("0123456789.")
-MATH_CHARS = list("+-/*()")
+MATH_CHARS = list("+-/*()%")
 
 from sys import argv
 
@@ -42,6 +43,9 @@ def lex(filecontent):
                 #print(expr + "NUM")
                 isexpr = 0
                 expr = ""
+            tok = ""
+        elif tok in TT_PRINTSTR:
+            tokens.append("PRINT_STR")
             tok = ""
         elif tok in TT_PRINT:
             tokens.append("PRINT")
@@ -99,12 +103,31 @@ def parse(toks):
                     i+=2
 
                 elif toks[i] + " " + toks[i+1][0:3] == "PRINT NUM":
-                    print(toks[i+1][4:])
+                    print(eval(toks[i+1][4:]))
                     i+=2
                 
                 elif toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR":
+                    print(eval(toks[i+1][5:]))
+                    i+=2
+                
+                elif toks[i] + " " + toks[i+1][0:3] == "PRINT_STR NUM":
+                    print(toks[i+1][4:])
+                    i+=2
+                
+                elif toks[i] + " " + toks[i+1][0:4] == "PRINT_STR EXPR":
                     print(toks[i+1][5:])
                     i+=2
+                
+                elif toks[i] + " " + toks[i+1][0:6] == "PRINT_STR STRING":
+                    print(toks[i+1][8:len(toks[i+1])-1])
+                    #print(toks[i+1][7:])
+                    i+=2
+                else:
+                    if toks[i][0:6] == "STRING":
+                        print("AloneSTRError")
+                        break
+                        i+=1
+
             except IndexError:
                 pass
 
