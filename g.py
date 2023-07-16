@@ -1,5 +1,6 @@
 import clear
 import shell
+import os
 
 __version__ = "0.0"
 
@@ -9,11 +10,24 @@ TT_PRINT = ["PRINT", "print"]
 TT_PRINTSTR = ["STR_PRINT", "str_print"]
 TT_QUIT = ["QUIT", "quit", "EXIT", "exit"]
 TT_CLEAR = ["CLEAR", "clear"]
+TT_CMD = ["CMD", "clear"]
 TT_VAR = ["$"]
 DIGITS = list("0123456789.")
 MATH_CHARS = list("+-/*()%")
 
-symbols = {}
+symbols = {
+    "$_VERSION" : __version__,
+}
+
+class Err:
+    def __init__(self, name, details):
+        self.details = details
+        self.name = name
+    
+    def do(self):
+        print(self.name, ":", self.details)
+        quit()
+
 
 from sys import argv
 
@@ -52,6 +66,7 @@ def lex(filecontent):
             elif varname != "":
                 tokens.append("VAR:" + varname)
                 varname = ""
+                var_started = 0
             tok = ""
         elif tok == "=" and state == 0:
             if varname != "": #-
@@ -79,11 +94,14 @@ def lex(filecontent):
         elif tok in TT_CLEAR:
             tokens.append("CLEAR")
             tok = ""
-        elif tok in DIGITS :  
+        elif tok in TT_CMD:
+            tokens.append("CMD")
+            tok = ""
+        elif tok in DIGITS and state == 0:  
             expr_started = 1
             expr += tok
             tok = ""
-        elif tok in MATH_CHARS:
+        elif tok in MATH_CHARS and state == 0:
             expr += tok
             isexpr = 1
             tok = ""
@@ -112,6 +130,7 @@ def parse(toks):
         
         elif toks[i] == "CLEAR":
             clear.clear()
+            i += 1
         
         elif toks[i].startswith("NUM") or toks[i].startswith("EXPR"):
             i += 1
@@ -129,6 +148,15 @@ def parse(toks):
                 elif toks[i] + " " + toks[i+1][0:3] == "PRINT NUM":
                     print(eval(toks[i+1][4:]))
                     i+=2
+                
+                elif toks[i] + " " + toks[i+1][0:3] == "PRINT VAR":
+                    try:
+                        print(symbols[toks[i+1][4:]])
+                        i+=2
+                    except KeyError:
+                        VarDoesNotExistError = Err("VarDoesNotExistError", "variable '"+ toks[i+1][4:]+ "' does not exist")
+                        VarDoesNotExistError.do()
+                    
                 
                 elif toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR":
                     print(eval(toks[i+1][5:]))
@@ -164,15 +192,28 @@ def parse(toks):
                 elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:4] == "VAR EQUALS EXPR":
                     ex = eval(toks[i+2][5:])
                     if "." in str(ex):
-                        symbols[toks[i][5:]] = float(ex)
+                        symbols[toks[i][4:]] = float(ex)
                     else:
-                        symbols[toks[i][5:]] = int(ex)    
-                    print(symbols[toks[i][5:]])
+                        symbols[toks[i][4:]] = int(ex)    
+                    #print(symbols[toks[i][4:]])
                     i+=3
+                
+                elif toks[i] + " " + toks[i+1][0:6] == "CMD STRING":
+                    os.system(toks[i+1][8:len(toks[i+1])-1])
+                    i+=2
+                
+                elif toks[i] + " " + toks[i+1][0:3] == "CMD VAR":
+                    try:
+                        os.system(symbols[toks[i+1][4:]])
+                        i+=2
+                    except KeyError:
+                        VarDoesNotExistError = Err("VarDoesNotExistError", "variable '"+ toks[i+1][4:]+ "' does not exist")
+                        VarDoesNotExistError.do()
 
                 else:
                     if toks[i][0:6] == "STRING":
-                        print("AloneSTRError")
+                        AloneSTRError = Err("AloneSTRError", "Alone string")
+                        AloneSTRError.do()
                         break
                         i+=1
 

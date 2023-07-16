@@ -1,3 +1,4 @@
-$myvar = "WoW"
-PRINT "ww"
-$myvar = 5/2
+$expression = $_VERSION
+
+CMD $expression
+PRINT $_VERSION
