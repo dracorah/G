@@ -1,2 +1,3 @@
-STR_PRINT "If it wooooooooooorks" "Yey"
-PRINT 99*8888
+$myvar = "WoW"
+PRINT "ww"
+$myvar = 5/2

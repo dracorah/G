@@ -9,18 +9,23 @@ TT_PRINT = ["PRINT", "print"]
 TT_PRINTSTR = ["STR_PRINT", "str_print"]
 TT_QUIT = ["QUIT", "quit", "EXIT", "exit"]
 TT_CLEAR = ["CLEAR", "clear"]
+TT_VAR = ["$"]
 DIGITS = list("0123456789.")
 MATH_CHARS = list("+-/*()%")
+
+symbols = {}
 
 from sys import argv
 
 def open_file(filename):
     data = open(filename, "r").read()
-    data += "<EOF>"
+    data += "\n"
     return data
 
 def lex(filecontent):
     tok = ""
+    var_started = 0
+    varname = ""
     expr_started = 0 # 0 --> Not in a number | 1 --> In a number
     expr = ""
     isexpr = 0
@@ -32,7 +37,8 @@ def lex(filecontent):
         tok += char
         if tok in " " and state == 0: 
             tok = ""
-        if tok == "\n" and state == 0 or tok == "<EOF>" and state == 0: 
+            
+        if tok == "\n" and state == 0: 
             if expr != "" and isexpr == 1:
                 tokens.append("EXPR:" + expr)
                 #print(expr + "EXPR")
@@ -43,6 +49,23 @@ def lex(filecontent):
                 #print(expr + "NUM")
                 isexpr = 0
                 expr = ""
+            elif varname != "":
+                tokens.append("VAR:" + varname)
+                varname = ""
+            tok = ""
+        elif tok == "=" and state == 0:
+            if varname != "": #-
+                tokens.append("VAR:" + varname) #-
+                varname = "" #-
+                var_started = 0
+            tokens.append("EQUALS")
+            tok = ""
+        elif tok in TT_VAR and state == 0:
+            var_started = 1
+            varname += tok
+            tok = ""
+        elif var_started == 1:
+            varname += tok
             tok = ""
         elif tok in TT_PRINTSTR:
             tokens.append("PRINT_STR")
@@ -76,6 +99,7 @@ def lex(filecontent):
             string += tok
             tok = ""
     print(tokens)
+    #return ""
     return tokens
 
 def parse(toks):
@@ -122,6 +146,30 @@ def parse(toks):
                     print(toks[i+1][8:len(toks[i+1])-1])
                     #print(toks[i+1][7:])
                     i+=2
+                
+                elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING":
+                    symbols[toks[i][4:]] = toks[i+2][8:len(toks[i+2])-1]
+                    #print(symbols[toks[i][4:]])
+                    i+=3
+
+                elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM":
+                    number = toks[i+2][4:]
+                    if "." in number:
+                        symbols[toks[i][4:]] = float(number)
+                    else:
+                        symbols[toks[i][4:]] = int(number)    
+                    #print(symbols[toks[i][4:]])
+                    i+=3
+                
+                elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:4] == "VAR EQUALS EXPR":
+                    ex = eval(toks[i+2][5:])
+                    if "." in str(ex):
+                        symbols[toks[i][5:]] = float(ex)
+                    else:
+                        symbols[toks[i][5:]] = int(ex)    
+                    print(symbols[toks[i][5:]])
+                    i+=3
+
                 else:
                     if toks[i][0:6] == "STRING":
                         print("AloneSTRError")
@@ -130,7 +178,8 @@ def parse(toks):
 
             except IndexError:
                 pass
-
+        
+            
 def run():
 
     try:
