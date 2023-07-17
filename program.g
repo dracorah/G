@@ -1,4 +1,3 @@
-$expression = $_VERSION
-
-CMD $expression
-PRINT $_VERSION
+$UWU = 2.5
+$version = $UWU
+PRINT $UWU

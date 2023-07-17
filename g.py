@@ -15,8 +15,14 @@ TT_VAR = ["$"]
 DIGITS = list("0123456789.")
 MATH_CHARS = list("+-/*()%")
 
+symbs = {
+    "$_VERSION" : __version__,
+    "$_CWD": os.getcwd()
+}
+
 symbols = {
     "$_VERSION" : __version__,
+    "$_CWD": os.getcwd()
 }
 
 class Err:
@@ -178,6 +184,11 @@ def parse(toks):
                 elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING":
                     symbols[toks[i][4:]] = toks[i+2][8:len(toks[i+2])-1]
                     #print(symbols[toks[i][4:]])
+                    i+=3
+                
+                elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS VAR":
+                    symbols[toks[i][4:]] = symbols[toks[i+2][4:]]
+                    print(symbols[toks[i][4:]])
                     i+=3
 
                 elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM":
