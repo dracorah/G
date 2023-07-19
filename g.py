@@ -188,7 +188,7 @@ def parse(toks):
                 
                 elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS VAR":
                     symbols[toks[i][4:]] = symbols[toks[i+2][4:]]
-                    print(symbols[toks[i][4:]])
+                    #print(symbols[toks[i][4:]])
                     i+=3
 
                 elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM":
