@@ -2,7 +2,7 @@ import clear
 import shell
 import os
 
-__version__ = "0.0"
+__version__ = "1.0"
 
 # TOKEN CONSTANTS
 
@@ -10,8 +10,12 @@ TT_PRINT = ["PRINT", "print"]
 TT_PRINTSTR = ["STR_PRINT", "str_print"]
 TT_NLNPRINT = ["NLN_PRINT", "nln_print"]
 TT_INPUT = ["INPUT", "input"]
+TT_NEXT = ["NEXT", "next"]
+TT_PREV = ["PREV", "prev"]
+TT_EXE = ["EXE", "exe"]
+TT_EVAL = ["EVAL", "eval"]
 TT_NUMPUT = ["NUMPUT", "numput"]
-TT_QUIT = ["QUIT", "quit", "EXIT", "exit"]
+TT_QUIT = ["QUIT", "quit", "EXIT", "exit", "END", "end"]
 TT_CLEAR = ["CLEAR", "clear"]
 TT_CMD = ["CMD", "clear"]
 TT_GETVARS = ["GETVARS", "getvars"]
@@ -108,6 +112,18 @@ def lex(filecontent):
             tok = ""
         elif tok in TT_NLNPRINT:
             tokens.append("NLN_PRINT")
+            tok = ""
+        elif tok in TT_NEXT:
+            tokens.append("NEXT")
+            tok = ""
+        elif tok in TT_PREV:
+            tokens.append("PREV")
+            tok = ""
+        elif tok in TT_EXE:
+            tokens.append("EXE")
+            tok = ""
+        elif tok in TT_EVAL:
+            tokens.append("EVAL")
             tok = ""
         elif tok in TT_GETCWD:
             tokens.append("GETCWD")
@@ -282,15 +298,55 @@ def parse(toks):
                         VarDoesNotExistError = Err("VarDoesNotExistError", "variable '"+ toks[i+1][4:]+ "' does not exist")
                         VarDoesNotExistError.do()
 
+                elif toks[i] + " " + toks[i+1][0:3] == "NEXT VAR":
+                    try:
+                        symbols[toks[i+1][4:]] += 1
+                        print(symbols[toks[i+1][4:]])
+                        i+=2
+                    except KeyError:
+                        VarDoesNotExistError = Err("VarDoesNotExistError", "variable '"+ toks[i+1][4:]+ "' does not exist")
+                        VarDoesNotExistError.do()
+                    except:
+                        VarIsNotANumError = Err("VarIsNotANumberError", "variable '" + toks[i+1][4:] + "' is not a NUM")
+                        VarIsNotANumError.do()
+                    
+
+                elif toks[i] + " " + toks[i+1][0:3] == "PREV VAR":
+                    try:
+                        symbols[toks[i+1][4:]] -= 1
+                        print(symbols[toks[i+1][4:]])
+                        i+=2
+                    except KeyError:
+                        VarDoesNotExistError = Err("VarDoesNotExistError", "variable '"+ toks[i+1][4:]+ "' does not exist")
+                        VarDoesNotExistError.do()
+                    except:
+                        VarIsNotANumError = Err("VarIsNotANumberError", "variable '" + toks[i+1][4:] + "' is not a NUM")
+                        VarIsNotANumError.do()
+
+                elif toks[i] + " " + toks[i+1][0:6] == "EXE STRING":
+                    fn = toks[i+1][8:len(toks[i+1])-1]
+                    try:
+                        fn_data = open_file(fn)
+                        fn_toks = lex(fn_data)
+                        parse(fn_toks)
+                    except FileNotFoundError:
+                        FileDoesNotExistError = Err("FileDoesNotExistError", "file '"+fn+"' does not exist in " + os.getcwd())
+                        FileDoesNotExistError.do()
+
+                elif toks[i] + " " + toks[i+1][0:6] == "EVAL STRING":
+                    code = toks[i+1][8:len(toks[i+1])-1]
+                    code = code + "\n"
+                    code_toks = lex(code)
+                    parse(code_toks)
+                    i+=2
+
                 else:
-                    if toks[i][0:6] == "STRING":
-                        AloneSTRError = Err("AloneSTRError", "Alone string")
-                        AloneSTRError.do()
-                        break
-                        i+=1
+                    print("SYNTAX ERROR")
+                    i+=1
 
             except IndexError:
-                pass
+                print("SYNTAX ERROR")
+                i+=1
         
             
 def run():

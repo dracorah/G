@@ -1,6 +1,6 @@
 import os
 
-__version__ = "0.0"
+__version__ = "1.0"
 
 QUIT = ["QUIT", "quit", "EXIT", "exit"]
 

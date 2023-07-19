@@ -1,4 +1,2 @@
-$hope = "BELE" ~~ UZUM
-
-NLN_PRINT 
-PRINT $_CWD
+EVAL "PRINT 1+1"
+END

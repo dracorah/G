@@ -1,11 +1,17 @@
+? = Should we dot it ?
+D = Declared
+T = Tokenized
+x = Done
+
 VAR EQUALS VAR                                                                            [x]
 VAR IN EXPRESSION                                                                         [ ]
 GOTO                                                                                      [ ]
 SUB                                                                                       [ ]
-EXE                                                                                       [ ]
+EXE                                                                                       [x]
+EVAL              (add EVAL VAR pls)                                                      [x]
 COMMENT                                                                                   [x]
 GETVARS                                                                                   [x]
 GETCWD                                                                                    [x]
-NLN_PRINT                                                                                 [ ]
+NLN_PRINT                                                                                 [x]
 OS FUNCTIONS (MOVE, REMOVE, MKDIR, RMDIR)                                                 [ ]
-NEXT, PREV (like ++ and -- in C)                                                          [ ]
+NEXT, PREV (like ++ and -- in C)                                                          [x]
