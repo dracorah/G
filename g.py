@@ -106,6 +106,12 @@ def lex(filecontent):
         elif tok in TT_PRINT:
             tokens.append("PRINT")
             tok = ""
+        elif tok in TT_NLNPRINT:
+            tokens.append("NLN_PRINT")
+            tok = ""
+        elif tok in TT_GETCWD:
+            tokens.append("GETCWD")
+            tok = ""
         elif tok in TT_QUIT:
             tokens.append("QUIT")
             tok = ""
@@ -168,6 +174,10 @@ def parse(toks):
         
         elif toks[i] == "GETVARS":
             print(symbols)
+            i+=1
+        
+        elif toks[i] == "GETCWD":
+            symbols["$_CWD"] = os.getcwd()
             i+=1
 
         else:
