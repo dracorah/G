@@ -8,10 +8,16 @@ __version__ = "0.0"
 
 TT_PRINT = ["PRINT", "print"]
 TT_PRINTSTR = ["STR_PRINT", "str_print"]
+TT_NLNPRINT = ["NLN_PRINT", "nln_print"]
+TT_INPUT = ["INPUT", "input"]
+TT_NUMPUT = ["NUMPUT", "numput"]
 TT_QUIT = ["QUIT", "quit", "EXIT", "exit"]
 TT_CLEAR = ["CLEAR", "clear"]
 TT_CMD = ["CMD", "clear"]
+TT_GETVARS = ["GETVARS", "getvars"]
+TT_GETCWD = ["GETCWD", "getcwd"]
 TT_VAR = ["$"]
+TT_COMMENT = "~~"
 DIGITS = list("0123456789.")
 MATH_CHARS = list("+-/*()%")
 
@@ -45,6 +51,8 @@ def open_file(filename):
 def lex(filecontent):
     tok = ""
     var_started = 0
+    in_comment = 0
+    comment = ""
     varname = ""
     expr_started = 0 # 0 --> Not in a number | 1 --> In a number
     expr = ""
@@ -55,7 +63,7 @@ def lex(filecontent):
     filecontent = list(filecontent)
     for char in filecontent:
         tok += char
-        if tok in " " and state == 0: 
+        if tok in " " and state == 0 and in_comment == 0: 
             tok = ""
             
         if tok == "\n" and state == 0: 
@@ -73,6 +81,10 @@ def lex(filecontent):
                 tokens.append("VAR:" + varname)
                 varname = ""
                 var_started = 0
+            elif in_comment == 1:
+                tokens.append("COMMENT:" + comment)
+                in_comment = 0
+                comment = ""
             tok = ""
         elif tok == "=" and state == 0:
             if varname != "": #-
@@ -100,8 +112,18 @@ def lex(filecontent):
         elif tok in TT_CLEAR:
             tokens.append("CLEAR")
             tok = ""
+        elif tok in TT_GETVARS:
+            tokens.append("GETVARS")
+            tok = ""
         elif tok in TT_CMD:
             tokens.append("CMD")
+            tok = ""
+        elif tok == TT_COMMENT and in_comment == 0 and state == 0:
+            in_comment = 1
+            comment = ""
+            tok = ""
+        elif in_comment == 1:
+            comment += tok
             tok = ""
         elif tok in DIGITS and state == 0:  
             expr_started = 1
@@ -140,6 +162,13 @@ def parse(toks):
         
         elif toks[i].startswith("NUM") or toks[i].startswith("EXPR"):
             i += 1
+        
+        elif toks[i].startswith("COMMENT"):
+            i+=1
+        
+        elif toks[i] == "GETVARS":
+            print(symbols)
+            i+=1
 
         else:
         
