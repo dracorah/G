@@ -207,6 +207,28 @@ def parse(toks):
                     print(eval(toks[i+1][5:]))
                     i+=2
                 
+                elif toks[i] + " " + toks[i+1][0:6] == "NLN_PRINT STRING":
+                    print(toks[i+1][8:len(toks[i+1])-1], end=" ")
+                    #print(toks[i+1][7:])
+                    i+=2
+
+                elif toks[i] + " " + toks[i+1][0:3] == "NLN_PRINT NUM":
+                    print(eval(toks[i+1][4:]), end=" ")
+                    i+=2
+                
+                elif toks[i] + " " + toks[i+1][0:3] == "NLN_PRINT VAR":
+                    try:
+                        print(symbols[toks[i+1][4:]], end=" ")
+                        i+=2
+                    except KeyError:
+                        VarDoesNotExistError = Err("VarDoesNotExistError", "variable '"+ toks[i+1][4:]+ "' does not exist")
+                        VarDoesNotExistError.do()
+                    
+                
+                elif toks[i] + " " + toks[i+1][0:4] == "NLN_PRINT EXPR":
+                    print(eval(toks[i+1][5:]), end=" ")
+                    i+=2
+                
                 elif toks[i] + " " + toks[i+1][0:3] == "PRINT_STR NUM":
                     print(toks[i+1][4:])
                     i+=2

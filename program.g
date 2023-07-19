@@ -1,5 +1,4 @@
 $hope = "BELE" ~~ UZUM
-~~ PRAY ~~
-GETVARS
-PRINT $hope
+
+NLN_PRINT 
 PRINT $_CWD

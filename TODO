@@ -5,6 +5,7 @@ SUB                                                                             
 EXE                                                                                       [ ]
 COMMENT                                                                                   [x]
 GETVARS                                                                                   [x]
-GETCWD                                                                                    [ ]
+GETCWD                                                                                    [x]
 NLN_PRINT                                                                                 [ ]
 OS FUNCTIONS (MOVE, REMOVE, MKDIR, RMDIR)                                                 [ ]
+NEXT, PREV (like ++ and -- in C)                                                          [ ]

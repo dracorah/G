@@ -2,7 +2,7 @@
 
 ![The G Programming Language Logo](G.png "The G Programming Language Logo")
 
-_**The G Programming Language is an interpreted language similar to BASIC**_
+_**The G Programming Language is a dynamically-typed interpreted language similar to BASIC**_
 
 - 📖Extremly beginner-friendly
 - 🐍Interpreter coded in python
