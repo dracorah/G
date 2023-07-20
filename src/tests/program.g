@@ -1,5 +1,11 @@
-IF 1 == 2 THEN  
-    PRINT "YIPPEE"
-_ENDIF
-PRINT "Hope"
+GETVARS
+DEL $_VERSION
+GETVARS
+
+~~IF  $_LAST_IF == 0 THEN  
+~~    PRINT "YIPPEE"
+~~    INPUT $thing
+~~_ENDIF
+
+
 END
