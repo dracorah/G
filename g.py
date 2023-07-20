@@ -111,8 +111,23 @@ def lex(filecontent):
                 var_started = 0
             if tokens[-1] == "EQUALS":
                 tokens[-1] = "EQEQ"
+            elif tokens[-1] == "BANG":
+                tokens[-1] = "BAEQ"
+            elif tokens[-1] == "HUNT_RIGHT":
+                tokens[-1] = "HREQ"
+            elif tokens[-1] == "HUNT_LEFT":
+                tokens[-1] = "HLEQ"
             else:
                 tokens.append("EQUALS")
+            tok = ""
+        elif tok == "!" and state == 0:
+            tokens.append("BANG")
+            tok = ""
+        elif tok == ">" and state == 0:
+            tokens.append("HUNT_RIGHT")
+            tok = ""
+        elif tok == "<" and state == 0:
+            tokens.append("HUNT_LEFT")
             tok = ""
         elif tok in TT_VAR and state == 0:
             var_started = 1

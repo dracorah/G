@@ -1,4 +1,4 @@
-IF 1 == 1 THEN  
+IF 1 >= 1 THEN  
     PRINT "YIPPEE"
 _ENDIF
 END
