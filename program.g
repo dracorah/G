@@ -1,6 +1,4 @@
-NLN_PRINT "Gimme ya name :"
-INPUT $name
-NLN_PRINT "Gimme ya age:"
-NUMPUT $age
-GETVARS
+IF 1 == 1 THEN  
+    PRINT "YIPPEE"
+_ENDIF
 END

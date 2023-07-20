@@ -6,6 +6,9 @@ __version__ = "1.0"
 
 # TOKEN CONSTANTS
 
+TT_IF = ["IF", "if"]
+TT_THEN = ["THEN", "then"]
+TT_ENDIF = ["_ENDIF", "_endif"]
 TT_PRINT = ["PRINT", "print"]
 TT_PRINTSTR = ["STR_PRINT", "str_print"]
 TT_NLNPRINT = ["NLN_PRINT", "nln_print"]
@@ -46,6 +49,7 @@ class Err:
         quit()
 
 
+
 from sys import argv
 
 def open_file(filename):
@@ -68,7 +72,7 @@ def lex(filecontent):
     filecontent = list(filecontent)
     for char in filecontent:
         tok += char
-        if tok in " " and state == 0 and in_comment == 0: 
+        if tok in " \t" and state == 0 and in_comment == 0: 
             tok = ""
             
         if tok == "\n" and state == 0: 
@@ -92,11 +96,23 @@ def lex(filecontent):
                 comment = ""
             tok = ""
         elif tok == "=" and state == 0:
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+            if expr != "" and isexpr == 1:
+                tokens.append("EXPR:" + expr)
+                expr = ""
+            if string != "":
+                tokens.append("STRING:" + string)
+                expr = ""
             if varname != "": #-
                 tokens.append("VAR:" + varname) #-
                 varname = "" #-
                 var_started = 0
-            tokens.append("EQUALS")
+            if tokens[-1] == "EQUALS":
+                tokens[-1] = "EQEQ"
+            else:
+                tokens.append("EQUALS")
             tok = ""
         elif tok in TT_VAR and state == 0:
             var_started = 1
@@ -149,6 +165,24 @@ def lex(filecontent):
             tok = ""
         elif tok in TT_CMD:
             tokens.append("CMD")
+            tok = ""
+        elif tok in TT_IF:
+            tokens.append("IF")
+            tok = ""
+        elif tok in TT_THEN:
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+            if expr != "" and isexpr == 1:
+                tokens.append("EXPR:" + expr)
+                expr = ""
+            if string != "":
+                tokens.append("STRING:" + string)
+                expr = ""
+            tokens.append("THEN")
+            tok = ""
+        elif tok in TT_ENDIF:
+            tokens.append("ENDIF")
             tok = ""
         elif tok == TT_COMMENT and in_comment == 0 and state == 0:
             in_comment = 1
@@ -419,7 +453,13 @@ def parse(toks):
                         symbols[var] = int(inp)
                     i+=2
                 
-                    
+                elif toks[i] == "IF":
+                    #input(toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4])
+                    full_cond = toks[i] + " " + toks[i+1] + " " + toks[i+2] + " " + toks[i+3] + " " + toks[i+4]
+                    op = toks[i+2]
+                    if toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4] == "IF NUM EQEQ NUM THEN":
+                        if float(toks[i+1][4:]) == float(toks[i+3][4:]):
+                            input("UZMBELE")
 
 
                 else:
@@ -436,6 +476,7 @@ def run():
     try:
         data = open_file(argv[1])
     except IndexError:
+        
         shell.sh()
 
     toks = lex(data)
