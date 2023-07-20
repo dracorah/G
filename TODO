@@ -1,4 +1,4 @@
-? = Should we dot it ?
+? = Should we do it ?
 D = Declared
 T = Tokenized
 x = Done
@@ -7,11 +7,14 @@ VAR EQUALS VAR                                                                  
 VAR IN EXPRESSION                                                                         [ ]
 GOTO                                                                                      [ ]
 SUB                                                                                       [ ]
+SLEEP                                                                                     [x]
 EXE                                                                                       [x]
-EVAL              (add EVAL VAR pls)                                                      [x]
+EVAL                               )                                                      [x]
 COMMENT                                                                                   [x]
 GETVARS                                                                                   [x]
 GETCWD                                                                                    [x]
 NLN_PRINT                                                                                 [x]
+INPUT                                                                                     [x]
+NUMPUT                                                                                    [x]
 OS FUNCTIONS (MOVE, REMOVE, MKDIR, RMDIR)                                                 [ ]
 NEXT, PREV (like ++ and -- in C)                                                          [x]

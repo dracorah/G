@@ -15,6 +15,7 @@ TT_PREV = ["PREV", "prev"]
 TT_EXE = ["EXE", "exe"]
 TT_EVAL = ["EVAL", "eval"]
 TT_NUMPUT = ["NUMPUT", "numput"]
+TT_SLEEP = ["SLEEP", "sleep"]
 TT_QUIT = ["QUIT", "quit", "EXIT", "exit", "END", "end"]
 TT_CLEAR = ["CLEAR", "clear"]
 TT_CMD = ["CMD", "clear"]
@@ -125,6 +126,15 @@ def lex(filecontent):
         elif tok in TT_EVAL:
             tokens.append("EVAL")
             tok = ""
+        elif tok in TT_SLEEP:
+            tokens.append("SLEEP")
+            tok = ""
+        elif tok in TT_INPUT:
+            tokens.append("INPUT")
+            tok = ""
+        elif tok in TT_NUMPUT:
+            tokens.append("NUMPUT")
+            tok = ""
         elif tok in TT_GETCWD:
             tokens.append("GETCWD")
             tok = ""
@@ -173,6 +183,7 @@ def lex(filecontent):
 def parse(toks):
     i = 0
     while (i < len(toks)):
+        #print(i, ":", toks[i])
         
         if toks[i] == "QUIT":
             break
@@ -182,7 +193,7 @@ def parse(toks):
             clear.clear()
             i += 1
         
-        elif toks[i].startswith("NUM") or toks[i].startswith("EXPR"):
+        elif toks[i].startswith("NUM") and toks[i] != "NUMPUT" or toks[i].startswith("EXPR"):
             i += 1
         
         elif toks[i].startswith("COMMENT"):
@@ -329,9 +340,37 @@ def parse(toks):
                         fn_data = open_file(fn)
                         fn_toks = lex(fn_data)
                         parse(fn_toks)
+                        i+=2
                     except FileNotFoundError:
                         FileDoesNotExistError = Err("FileDoesNotExistError", "file '"+fn+"' does not exist in " + os.getcwd())
                         FileDoesNotExistError.do()
+                    except:
+                        int("44")
+                        fn_data = open_file(fn)
+                        fn_toks = lex(fn_data)
+                        parse(fn_toks)
+                        i+=2
+                
+                elif toks[i] + " " + toks[i+1][0:3] == "EXE VAR":
+                    try:
+                        fn = symbols[toks[i+1][4:]]
+                        fn_data = open_file(fn)
+                        fn_toks = lex(fn_data)
+                        parse(fn_toks)
+                        i+=2
+                    except KeyError:
+                        VarDoesNotExistError = Err("VarDoesNotExistError", "variable '"+ toks[i+1][4:]+ "' does not exist")
+                        VarDoesNotExistError.do()
+                    except FileNotFoundError:
+                        FileDoesNotExistError = Err("FileDoesNotExistError", "file '"+fn+"' does not exist in " + os.getcwd())
+                        FileDoesNotExistError.do()
+                    
+                    except:
+                        int("44")
+                        fn_data = open_file(fn)
+                        fn_toks = lex(fn_data)
+                        parse(fn_toks)
+                        i+=2
 
                 elif toks[i] + " " + toks[i+1][0:6] == "EVAL STRING":
                     code = toks[i+1][8:len(toks[i+1])-1]
@@ -339,6 +378,49 @@ def parse(toks):
                     code_toks = lex(code)
                     parse(code_toks)
                     i+=2
+                
+                elif toks[i] + " " + toks[i+1][0:3] == "EVAL VAR":
+                    try:
+                        code = symbols[toks[i+1][4:]]
+                        code = code + "\n"
+                        code_toks = lex(code)
+                        parse(code_toks)
+                        i+=2
+                    except KeyError:
+                        VarDoesNotExistError = Err("VarDoesNotExistError", "variable '"+ toks[i+1][4:]+ "' does not exist")
+                        VarDoesNotExistError.do()
+                    
+                elif toks[i] + " " + toks[i+1][0:3] == "SLEEP NUM":
+                    num = float(toks[i+1][4:])
+                    import time
+                    time.sleep(num)
+                    i+=2
+                elif toks[i] + " " + toks[i+1][0:3] == "SLEEP VAR":
+                    try:
+                        num = float(symbols[toks[i+1][4:]])
+                        import time
+                        time.sleep(num)
+                        i+=2
+                    except KeyError:
+                        VarDoesNotExistError = Err("VarDoesNotExistError", "variable '"+ toks[i+1][4:]+ "' does not exist")
+                        VarDoesNotExistError.do()
+                
+                elif toks[i] + " " + toks[i+1][0:3] == "INPUT VAR":
+                    var  = toks[i+1][4:]
+                    symbols[var] = input("")
+                    i+=2
+            
+                elif toks[i] + " " + toks[i+1][0:3] == "NUMPUT VAR":
+                    var  = toks[i+1][4:]
+                    inp = input("")
+                    if "." in inp:
+                        symbols[var] = float(inp)
+                    else:
+                        symbols[var] = int(inp)
+                    i+=2
+                
+                    
+
 
                 else:
                     print("SYNTAX ERROR")

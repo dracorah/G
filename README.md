@@ -6,8 +6,8 @@ _**The G Programming Language is a dynamically-typed interpreted language simila
 
 - 📖Extremly beginner-friendly
 - 🐍Interpreter coded in python
-- ⚡Blazingly slow
+- 🐌Blazingly slow
 - 📝Very easy to contribute to
 - 🕹️Cool Retro Looking
 
-**So what are you waiting for? The G programming language needs you! 🫵**
+**So what are you waiting for? The G Programming Language needs you! 🫵**
