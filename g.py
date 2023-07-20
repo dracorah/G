@@ -218,8 +218,10 @@ def parse(toks):
     i = 0
     while (i < len(toks)):
         #print(i, ":", toks[i])
-        
-        if toks[i] == "QUIT":
+        if toks[i] == "ENDIF":
+            print("FOUND ENDIF")
+            i+=1
+        elif toks[i] == "QUIT":
             break
             quit()
         
@@ -457,9 +459,16 @@ def parse(toks):
                     #input(toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4])
                     full_cond = toks[i] + " " + toks[i+1] + " " + toks[i+2] + " " + toks[i+3] + " " + toks[i+4]
                     op = toks[i+2]
-                    if toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4] == "IF NUM EQEQ NUM THEN":
-                        if float(toks[i+1][4:]) == float(toks[i+3][4:]):
-                            input("UZMBELE")
+                    if op == "EQEQ":
+                        if toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4] == "IF NUM EQEQ NUM THEN":
+                            if float(toks[i+1][4:]) == float(toks[i+3][4:]):
+                                print("True")
+                                i+=5
+                            else:
+                                print("False")
+                                i+=7
+
+                            
 
 
                 else:
