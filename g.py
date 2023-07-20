@@ -9,6 +9,8 @@ __version__ = "1.0"
 TT_IF = ["IF", "if"]
 TT_THEN = ["THEN", "then"]
 TT_ENDIF = ["_ENDIF", "_endif"]
+TT_ELSE = ["ELSE", "else"]
+TT_DEL = ["DEL", "DEL"]
 TT_PRINT = ["PRINT", "print"]
 TT_PRINTSTR = ["STR_PRINT", "str_print"]
 TT_NLNPRINT = ["NLN_PRINT", "nln_print"]
@@ -36,7 +38,8 @@ symbs = {
 
 symbols = {
     "$_VERSION" : __version__,
-    "$_CWD": os.getcwd()
+    "$_CWD": os.getcwd(),
+    "$_LAST_IF": 0
 }
 
 class Err:
@@ -95,7 +98,7 @@ def lex(filecontent):
                 in_comment = 0
                 comment = ""
             tok = ""
-        elif tok == "=" and state == 0:
+        elif tok == "=" and state == 0 and in_comment == 0:
             if expr != "" and isexpr == 0:
                 tokens.append("NUM:" + expr)
                 expr = ""
@@ -120,7 +123,7 @@ def lex(filecontent):
             else:
                 tokens.append("EQUALS")
             tok = ""
-        elif tok == "!" and state == 0:
+        elif tok == "!" and state == 0 and in_comment == 0:
             if expr != "" and isexpr == 0:
                 tokens.append("NUM:" + expr)
                 expr = ""
@@ -136,7 +139,7 @@ def lex(filecontent):
                 var_started = 0
             tokens.append("BANG")
             tok = ""
-        elif tok == ">" and state == 0:
+        elif tok == ">" and state == 0 and in_comment == 0:
             if expr != "" and isexpr == 0:
                 tokens.append("NUM:" + expr)
                 expr = ""
@@ -152,7 +155,7 @@ def lex(filecontent):
                 var_started = 0
             tokens.append("HUNT_RIGHT")
             tok = ""
-        elif tok == "<" and state == 0:
+        elif tok == "<" and state == 0 and in_comment == 0:
             if expr != "" and isexpr == 0:
                 tokens.append("NUM:" + expr)
                 expr = ""
@@ -168,7 +171,7 @@ def lex(filecontent):
                 var_started = 0
             tokens.append("HUNT_LEFT")
             tok = ""
-        elif tok in TT_VAR and state == 0:
+        elif tok in TT_VAR and state == 0 and in_comment == 0:
             var_started = 1
             varname += tok
             tok = ""
@@ -222,6 +225,9 @@ def lex(filecontent):
             tok = ""
         elif tok in TT_IF:
             tokens.append("IF")
+            tok = ""
+        elif tok in TT_DEL:
+            tokens.append("DEL")
             tok = ""
         elif tok in TT_THEN:
             if expr != "" and isexpr == 0:
@@ -512,6 +518,11 @@ def parse(toks):
                         symbols[var] = int(inp)
                     i+=2
                 
+                elif toks[i] + " " + toks[i+1][0:3] == "DEL VAR":
+                    var = toks[i+1][4:]
+                    del symbols[var]
+                    i+=2
+                
                 elif toks[i] == "IF":
                     #input(toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4])
                     full_cond = toks[i] + " " + toks[i+1] + " " + toks[i+2] + " " + toks[i+3] + " " + toks[i+4]
@@ -519,11 +530,15 @@ def parse(toks):
                     if op == "EQEQ":
                         if toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4] == "IF NUM EQEQ NUM THEN":
                             if float(toks[i+1][4:]) == float(toks[i+3][4:]):
-                                print("True")
+                                #print("True")
+                                symbols["$_LAST_IF"] = 1
+                                in_false_if = 0
                                 i+=5
                             else:
-                                print("False")
-                                i+=7
+                                #print("False")
+                                symbols["$_LAST_IF"] = 0
+                                in_false_if = 1
+                                i+=1
 
                             
 
