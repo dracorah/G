@@ -2,7 +2,7 @@ import clear
 import shell
 import os
 
-__version__ = "1.0"
+__version__ = "1.0.1"
 
 # TOKEN CONSTANTS
 
