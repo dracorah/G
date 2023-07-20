@@ -11,7 +11,7 @@ IF                                                                              
 SLEEP                                                                                     [x]
 EXE                                                                                       [x]
 EVAL                                                                                      [x]
-TOKENIZE !<>                                                                              [ ]
+TOKENIZE !<>                                                                              [x]
 COMMENT                                                                                   [x]
 GETVARS                                                                                   [x]
 GETCWD                                                                                    [x]

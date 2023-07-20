@@ -121,12 +121,51 @@ def lex(filecontent):
                 tokens.append("EQUALS")
             tok = ""
         elif tok == "!" and state == 0:
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+            if expr != "" and isexpr == 1:
+                tokens.append("EXPR:" + expr)
+                expr = ""
+            if string != "":
+                tokens.append("STRING:" + string)
+                expr = ""
+            if varname != "": #-
+                tokens.append("VAR:" + varname) #-
+                varname = "" #-
+                var_started = 0
             tokens.append("BANG")
             tok = ""
         elif tok == ">" and state == 0:
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+            if expr != "" and isexpr == 1:
+                tokens.append("EXPR:" + expr)
+                expr = ""
+            if string != "":
+                tokens.append("STRING:" + string)
+                expr = ""
+            if varname != "": #-
+                tokens.append("VAR:" + varname) #-
+                varname = "" #-
+                var_started = 0
             tokens.append("HUNT_RIGHT")
             tok = ""
         elif tok == "<" and state == 0:
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+            if expr != "" and isexpr == 1:
+                tokens.append("EXPR:" + expr)
+                expr = ""
+            if string != "":
+                tokens.append("STRING:" + string)
+                expr = ""
+            if varname != "": #-
+                tokens.append("VAR:" + varname) #-
+                varname = "" #-
+                var_started = 0
             tokens.append("HUNT_LEFT")
             tok = ""
         elif tok in TT_VAR and state == 0:
@@ -231,10 +270,13 @@ def lex(filecontent):
 
 def parse(toks):
     i = 0
+    in_false_if = 0
     while (i < len(toks)):
         #print(i, ":", toks[i])
         if toks[i] == "ENDIF":
-            print("FOUND ENDIF")
+            in_false_if = 0
+            i+=1
+        elif in_false_if == 1:
             i+=1
         elif toks[i] == "QUIT":
             break

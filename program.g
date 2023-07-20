@@ -1,4 +1,5 @@
-IF 1 >= 1 THEN  
+IF 1 == 2 THEN  
     PRINT "YIPPEE"
 _ENDIF
+PRINT "Hope"
 END
