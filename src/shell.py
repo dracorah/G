@@ -5,7 +5,7 @@ import os
 QUIT = ["QUIT", "quit", "EXIT", "exit", "END", "end"]
 
 def sh(): 
-    import g
+    import src.g as g
     print("The G Programming Language")
     prompt = "\n╭──(v." + g.__version__ + ")\n│\n╰──🞂 "
 
