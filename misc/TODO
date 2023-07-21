@@ -7,7 +7,7 @@ VAR EQUALS VAR                                                                  
 VAR IN EXPRESSION                                                                         [ ]
 GOTO                                                                                      [ ]
 SUB                                                                                       [ ]
-IF                                                                                        [ ]
+IF                                                                                        [X]
 SLEEP                                                                                     [x]
 EXE                                                                                       [x]
 EVAL                                                                                      [x]
@@ -21,7 +21,3 @@ NUMPUT                                                                          
 DEL [VAR]                                                                                 [X]
 OS FUNCTIONS (MOVE, REMOVE, MKDIR, RMDIR)                                                 [ ]
 NEXT, PREV (like ++ and -- in C)                                                          [x]
-
-IFS : 
-    Do all the operators !!
-    Do the else parsing (so an 'IF', 'VAR:$_LAST_IF', 'EQEQ', 'NUM:0')
