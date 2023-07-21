@@ -226,6 +226,14 @@ def lex(filecontent):
         elif tok in TT_IF:
             tokens.append("IF")
             tok = ""
+        elif tok in TT_ELSE:
+            tokens.append("ENDIF")
+            tokens.append("IF")
+            tokens.append("VAR:$_LAST_IF")
+            tokens.append("EQEQ")
+            tokens.append("NUM:0")
+            tokens.append("THEN")
+            tok = ""
         elif tok in TT_DEL:
             tokens.append("DEL")
             tok = ""
@@ -238,7 +246,12 @@ def lex(filecontent):
                 expr = ""
             if string != "":
                 tokens.append("STRING:" + string)
-                expr = ""
+                string = ""
+            if varname != "":
+                tokens.append("VAR:" + varname)
+                varname = ""
+                var_started = 0
+            #input("h")
             tokens.append("THEN")
             tok = ""
         elif tok in TT_ENDIF:
@@ -525,10 +538,15 @@ def parse(toks):
                 
                 elif toks[i] == "IF":
                     #input(toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4])
+                    min_cond = toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4]
                     full_cond = toks[i] + " " + toks[i+1] + " " + toks[i+2] + " " + toks[i+3] + " " + toks[i+4]
                     op = toks[i+2]
+                    #EQEQ == 
+                    #BAEQ !=
+                    #HLEQ <=
+                    #HREQ >=
                     if op == "EQEQ":
-                        if toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4] == "IF NUM EQEQ NUM THEN":
+                        if min_cond == "IF NUM EQEQ NUM THEN":
                             if float(toks[i+1][4:]) == float(toks[i+3][4:]):
                                 #print("True")
                                 symbols["$_LAST_IF"] = 1
@@ -539,6 +557,37 @@ def parse(toks):
                                 symbols["$_LAST_IF"] = 0
                                 in_false_if = 1
                                 i+=1
+                        elif min_cond == "IF NUM EQEQ VAR THEN":
+                            if float(toks[i+1][4:]) == symbols[toks[i+3][4:]]:
+                                #print("True")
+                                symbols["$_LAST_IF"] = 1
+                                in_false_if = 0
+                                i+=5
+                            else:
+                                #print("False")
+                                symbols["$_LAST_IF"] = 0
+                                in_false_if = 1
+                                i+=1
+                        elif min_cond == "IF VAR EQEQ NUM THEN":
+                            if float(toks[i+3][4:]) == symbols[toks[i+1][4:]]:
+                                #print("True")
+                                symbols["$_LAST_IF"] = 1
+                                in_false_if = 0
+                                i+=5
+                            else:
+                                #print("False")
+                                symbols["$_LAST_IF"] = 0
+                                in_false_if = 1
+                                i+=1
+                        elif min_cond == "IF VAR EQEQ VAR THEN":
+                            print("Urde'eeeeee")
+                        elif min_cond == "IF NUM EQEQ EXP THEN":
+                            input("TROLOLOL")
+                            break
+                        elif min_cond == "IF EXP EQEQ NUM THEN":
+                            pass
+                        elif min_cond == "IF EXP EQEQ EXP THEN":
+                            pass
 
                             
 
