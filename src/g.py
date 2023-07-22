@@ -1,4 +1,4 @@
-import clear
+
 import shell
 import os
 
@@ -318,11 +318,12 @@ def parse(toks):
         elif in_false_if == 1:
             i+=1
         elif toks[i] == "QUIT":
-            break
             quit()
+            break
+            
         
         elif toks[i] == "CLEAR":
-            clear.clear()
+            os.system('cls' if os.name == 'nt' else 'clear')
             i += 1
         
         elif toks[i].startswith("NUM") and toks[i] != "NUMPUT" or toks[i].startswith("EXPR"):
