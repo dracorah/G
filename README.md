@@ -3,7 +3,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <img src="images/G.PNG" alt="Logo" width="120" height="120">
+  <img src="images/G.png" alt="Logo" width="120" height="120">
 </a>
 
 <h3 align="center">The G Programming Language</h3>
