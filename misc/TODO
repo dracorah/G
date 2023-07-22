@@ -8,6 +8,8 @@ VAR IN EXPRESSION                                                               
 GOTO                                                                                      [ ]
 SUB                                                                                       [ ]
 IF                                                                                        [X]
+ALL IF OPERATORS                                                                          [ ]
+SUB VAR, GOTO VAR                                                                         [ ]
 SLEEP                                                                                     [x]
 EXE                                                                                       [x]
 EVAL                                                                                      [x]

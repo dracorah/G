@@ -2,15 +2,18 @@ import clear
 import shell
 import os
 
-__version__ = "1.0.1"
+__version__ = "0.1"
 
 # TOKEN CONSTANTS
 
 TT_IF = ["IF", "if"]
 TT_THEN = ["THEN", "then"]
-TT_ENDIF = ["_ENDIF", "_endif"]
+TT_ENDIF = ["_ENDIF", "_endif", "_IF", "_if"]
 TT_ELSE = ["ELSE", "else"]
 TT_DEL = ["DEL", "DEL"]
+TT_SUB = ["SUB", "sub"]
+TT_ENDSUB = ["_SUB", "_sub"]
+TT_GOTO = ["GOTO", "goto"]
 TT_PRINT = ["PRINT", "print"]
 TT_PRINTSTR = ["STR_PRINT", "str_print"]
 TT_NLNPRINT = ["NLN_PRINT", "nln_print"]
@@ -23,7 +26,7 @@ TT_NUMPUT = ["NUMPUT", "numput"]
 TT_SLEEP = ["SLEEP", "sleep"]
 TT_QUIT = ["QUIT", "quit", "EXIT", "exit", "END", "end"]
 TT_CLEAR = ["CLEAR", "clear"]
-TT_CMD = ["CMD", "clear"]
+TT_CMD = ["CMD", "cmd"]
 TT_GETVARS = ["GETVARS", "getvars"]
 TT_GETCWD = ["GETCWD", "getcwd"]
 TT_VAR = ["$"]
@@ -31,15 +34,14 @@ TT_COMMENT = "~~"
 DIGITS = list("0123456789.")
 MATH_CHARS = list("+-/*()%")
 
-symbs = {
-    "$_VERSION" : __version__,
-    "$_CWD": os.getcwd()
-}
-
 symbols = {
     "$_VERSION" : __version__,
     "$_CWD": os.getcwd(),
     "$_LAST_IF": 0
+}
+
+subs = {
+
 }
 
 class Err:
@@ -199,6 +201,15 @@ def lex(filecontent):
         elif tok in TT_EVAL:
             tokens.append("EVAL")
             tok = ""
+        elif tok in TT_SUB:
+            tokens.append("SUB")
+            tok = ""
+        elif tok in TT_ENDSUB:
+            tokens.append("ENDSUB")
+            tok = ""
+        elif tok in TT_GOTO:
+            tokens.append("GOTO")
+            tok = ""
         elif tok in TT_SLEEP:
             tokens.append("SLEEP")
             tok = ""
@@ -290,9 +301,18 @@ def lex(filecontent):
 def parse(toks):
     i = 0
     in_false_if = 0
+    in_sub = 0
+    csn = "" # Current Sub Name
     while (i < len(toks)):
         #print(i, ":", toks[i])
-        if toks[i] == "ENDIF":
+        if toks[i] == "ENDSUB":
+            in_sub = 0
+            csn = ""
+            i+=1
+        elif in_sub == 1:
+            subs[csn].append(toks[i])
+            i+=1
+        elif toks[i] == "ENDIF":
             in_false_if = 0
             i+=1
         elif in_false_if == 1:
@@ -588,8 +608,24 @@ def parse(toks):
                             pass
                         elif min_cond == "IF EXP EQEQ EXP THEN":
                             pass
+                
+                
+                elif toks[i] + " " + toks[i+1][0:6] == "SUB STRING":
+                    in_sub = 1
+                    csn = toks[i+1][8:len(toks[i+1])-1]
+                    subs[csn] = []
+                    i+=2
+                
+                elif toks[i] + " " + toks[i+1][0:6] == "GOTO STRING":
+                    try:
+                        parse(subs[toks[i+1][8:len(toks[i+1])-1]])
+                        i+=2
+                    except KeyError:
+                        SubProcessDoesNotExistError = Err("SubProcessDoesNotExistError", "SubProcess '" + toks[i+1][8:len(toks[i+1])-1] + "' Does Not Exist.")
+                        SubProcessDoesNotExistError.do()
+                        break
+                    
 
-                            
 
 
                 else:

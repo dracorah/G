@@ -1,13 +1,10 @@
-~~CLEAR
-PRINT
-"
-
-Welcome to my project
-
-"
-NLN_PRINT "Gimme your name :"
-NUMPUT $name
-~~CLEAR 
-NLN_PRINT "Welcome,"
-PRINT $name
+SUB "MySub"
+    PRINT "YESS"
+_SUB
+SUB "MySub"
+    if 1==2 then
+        PRINT "Oh NAUR"
+    _if
+_SUB
+GOTO "MySub"
 END
